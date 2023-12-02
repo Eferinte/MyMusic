@@ -1,0 +1,28 @@
+.player-wrap{
+    width: 206px;
+    height: 205px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) scale(2);
+}
+.player-wrap::before{
+    content: "";
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-position: -140px -580px;
+    background-image: url(./assets/coverall.png);
+    animation-name: spin;
+    animation-duration: 10s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+@keyframes spin {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
