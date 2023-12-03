@@ -33,6 +33,8 @@ module.exports = async function (env, argv) {
            'style-loader',
            'css-loader'
          ]
+       },{
+        test:/\.ts$/,use:"ts-loader"
        }]
     },
   }, argv);

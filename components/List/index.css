@@ -1,0 +1,9 @@
+.music-row{
+    margin: 8px;
+    background-color: white;
+    transition: .25s;
+}
+.music-row:hover{
+    background-color: antiquewhite;
+    cursor: pointer;
+}

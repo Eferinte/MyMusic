@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Player } from './components/Player';
 
 export default function App() {
+
   return (
     <View style={styles.container}>
       <Player />
