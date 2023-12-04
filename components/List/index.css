@@ -1,9 +1,31 @@
-.music-row{
-    margin: 8px;
-    background-color: white;
-    transition: .25s;
+.music-row,
+.music-row-active {
+  margin: 8px;
+  background-color: white;
+  transition: 0.25s;
+  width: 15vw;
+  color: #2d2d2d;
+  animation-name: slideIn;
+  animation-direction: alternate;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-iteration-count: initial;
+  animation-fill-mode: backwards;
+  padding: 4px 16px;
 }
-.music-row:hover{
-    background-color: antiquewhite;
-    cursor: pointer;
+.music-row-active {
+  background-color: rgba(192, 192, 192, 0.4);
+}
+.music-row:hover {
+  background-color: silver;
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
 }

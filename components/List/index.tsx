@@ -1,7 +1,8 @@
 import { Dispatch, useCallback, useState } from "react";
 import "./index.css";
-import { Action } from "../Player";
+import { Action, State } from "../Player";
 import { request } from "../../utils/request";
+import { Hinter } from "../Hinter/indext";
 
 export interface Music {
   name: string;
@@ -14,22 +15,38 @@ export interface Music {
 interface Props {
   list: Music[];
   dispatch: Dispatch<Action>;
+  state: State;
 }
 
 export const MusicList = (props: Props) => {
-  const { list, dispatch } = props;
+  const { list, dispatch, state } = props;
 
-  const musicRender = useCallback((music: Music, key: number) => {
-    return (
-      <div
-        className="music-row"
-        key={key}
-        onClick={() => dispatch({ type: "playNew", data: music })}
-      >
-        {music.name}
-      </div>
-    );
+  const tryPlay = useCallback((music: Music) => {
+    request(`checkSrc?id=${music.id}`, "GET").then((res) => {
+      if (res.data.code === 2000) dispatch({ type: "playNew", data: music });
+      else Hinter({ message: res.data.message });
+    });
   }, []);
+
+  const musicRender = useCallback(
+    (music: Music, key: number) => {
+      return (
+        <div
+          style={{ animationDelay: key + "00ms" }}
+          className={
+            state.currentMusic?.id === music.id
+              ? "music-row-active"
+              : "music-row"
+          }
+          key={key}
+          onClick={() => tryPlay(music)}
+        >
+          {music.name}
+        </div>
+      );
+    },
+    [state]
+  );
 
   return (
     <div className="list-wrap">
