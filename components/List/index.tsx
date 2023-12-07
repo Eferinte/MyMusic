@@ -21,9 +21,9 @@ interface Props {
 export const MusicList = (props: Props) => {
   const { list, dispatch, state } = props;
 
-  const tryPlay = useCallback((music: Music) => {
+  const tryPlay = useCallback((music: Music, index: number) => {
     request(`checkSrc?id=${music.id}`, "GET").then((res) => {
-      if (res.data.code === 2000) dispatch({ type: "playNew", data: music });
+      if (res.data.code === 2000) dispatch({ type: "playNew", data: index });
       else Hinter({ message: res.data.message });
     });
   }, []);
@@ -34,12 +34,10 @@ export const MusicList = (props: Props) => {
         <div
           style={{ animationDelay: key + "00ms" }}
           className={
-            state.currentMusic?.id === music.id
-              ? "music-row-active"
-              : "music-row"
+            state.currentIndex === key ? "music-row-active" : "music-row"
           }
           key={key}
-          onClick={() => tryPlay(music)}
+          onClick={() => tryPlay(music, key)}
         >
           {music.name}
         </div>

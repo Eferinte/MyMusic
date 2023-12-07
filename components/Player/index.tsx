@@ -25,7 +25,7 @@ export type Action =
     }
   | {
       type: "playNew";
-      data: Music;
+      data: number;
     };
 
 export enum PLAY_STATE {
@@ -33,10 +33,18 @@ export enum PLAY_STATE {
   STOPPED = 2,
 }
 
+export enum PLAY_MODE {
+  LIST = 1,
+  RANDOM = 2,
+  REPEAT = 3,
+  LIST_REPEAT = 4,
+}
+
 export interface State {
   playState: PLAY_STATE;
-  currentMusic?: Music;
+  currentIndex?: number;
   musicList: Music[];
+  playMode: PLAY_MODE;
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -55,7 +63,7 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         playState: PLAY_STATE.PLAYING,
-        currentMusic: action.data,
+        currentIndex: action.data,
       };
     }
     case "updateList": {
@@ -71,7 +79,10 @@ export const Player = (props) => {
   const [state, dispatch] = useReducer(reducer, {
     playState: PLAY_STATE.STOPPED,
     musicList: [],
+    playMode: PLAY_MODE.REPEAT,
   });
+
+  const currentMusic = state?.musicList?.[state?.currentIndex || 0];
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -99,6 +110,30 @@ export const Player = (props) => {
       const listener = () => console.log("load error");
       audioRef.current.addEventListener("error", listener);
       return audioRef.current.removeEventListener("error", listener);
+    }
+  }, []);
+
+  const getNextIndex = useCallback(() => {
+    switch (state.playMode) {
+      case PLAY_MODE.LIST: {
+        if (state.currentIndex < state.musicList.length - 1)
+          return state.currentIndex + 1;
+        return undefined;
+      }
+      case PLAY_MODE.RANDOM: {
+        return (Math.random() * 999) / (state.musicList.length - 1);
+      }
+      case PLAY_MODE.REPEAT: {
+        const audio: HTMLAudioElement = document.getElementById(
+          "audio"
+        ) as HTMLAudioElement;
+        audio.currentTime = 0;
+        audio.load();
+        return state.currentIndex;
+      }
+      case PLAY_MODE.LIST_REPEAT: {
+        return state.currentIndex + (1 % (state.musicList.length - 1));
+      }
     }
   }, []);
 
@@ -165,7 +200,7 @@ export const Player = (props) => {
       >
         UPLOAD
       </div>
-      {state.currentMusic?.id && (
+      {currentMusic?.id && (
         <audio
           ref={audioRef}
           id="audio"
@@ -173,8 +208,12 @@ export const Player = (props) => {
           preload="auto"
           style={{ position: "absolute", bottom: 100 }}
           onSuspend={() => console.log("loading")}
-          src={`http://localhost:8080/MyMusic/api/getMusic?id=${state.currentMusic.id}`}
-          onEnded={() => dispatch({ type: "stop" })}
+          src={`http://localhost:8080/MyMusic/api/getMusic?id=${currentMusic.id}`}
+          onEnded={() => {
+            dispatch({ type: "stop" });
+            // 自动连播
+            dispatch({ type: "playNew", data: getNextIndex() });
+          }}
         ></audio>
       )}
       <Controller audioRef={audioRef.current} />
