@@ -1,19 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, useEffect, useMemo, useState } from "react";
 import "./index.css";
 import "rc-slider/assets/index.css";
 import Slider from "rc-slider";
 import { formatMinute } from "../../utils/format";
+import { Action, PLAY_MODE, State } from "../Player";
 
 interface Props {
   audioRef: HTMLAudioElement;
+  state: State;
+  dispatch: Dispatch<Action>;
 }
 
 export const Controller = (props: Props) => {
-  const { audioRef } = props;
+  const { audioRef, state, dispatch } = props;
   const [timer, setTimer] = useState<NodeJS.Timer>();
   const [currentTime, setCurrentTime] = useState<number>();
   const [duration, setDuration] = useState<number>();
   const [dragLock, setDragLock] = useState<boolean>(true);
+
+  const MODE_LIST = [
+    PLAY_MODE.LIST,
+    PLAY_MODE.RANDOM,
+    PLAY_MODE.REPEAT,
+    PLAY_MODE.LIST_REPEAT,
+  ];
 
   const offsetX = useMemo(() => {
     if (!currentTime || !duration) return 0;
@@ -69,6 +79,21 @@ export const Controller = (props: Props) => {
       <div id="timer">{`${formatMinute(currentTime)} / ${formatMinute(
         duration
       )}`}</div>
+
+      <div
+        id="modeController"
+        onClick={() => {
+          dispatch({
+            type: "updatePlayMode",
+            data: MODE_LIST[
+              (MODE_LIST.findIndex((mode) => mode === state.playMode) + 1) %
+                (MODE_LIST.length - 1)
+            ],
+          });
+        }}
+      >
+        {state.playMode}
+      </div>
     </div>
   );
 };

@@ -26,6 +26,10 @@ export type Action =
   | {
       type: "playNew";
       data: number;
+    }
+  | {
+      type: "updatePlayMode";
+      data: PLAY_MODE;
     };
 
 export enum PLAY_STATE {
@@ -34,10 +38,10 @@ export enum PLAY_STATE {
 }
 
 export enum PLAY_MODE {
-  LIST = 1,
-  RANDOM = 2,
-  REPEAT = 3,
-  LIST_REPEAT = 4,
+  LIST = "列表播放",
+  RANDOM = "随机播放",
+  REPEAT = "单曲循环",
+  LIST_REPEAT = "列表循环",
 }
 
 export interface State {
@@ -70,6 +74,12 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         musicList: action.data,
+      };
+    }
+    case "updatePlayMode": {
+      return {
+        ...state,
+        playMode: action.data,
       };
     }
   }
@@ -216,7 +226,11 @@ export const Player = (props) => {
           }}
         ></audio>
       )}
-      <Controller audioRef={audioRef.current} />
+      <Controller
+        state={state}
+        dispatch={dispatch}
+        audioRef={audioRef.current}
+      />
     </div>
   );
 };
