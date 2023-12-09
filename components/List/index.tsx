@@ -26,6 +26,13 @@ export const MusicList = (props: Props) => {
       if (res.data.code === 2000) dispatch({ type: "playNew", data: index });
       else Hinter({ message: res.data.message });
     });
+
+    request(
+      `http://localhost:8080/MyMusic/api/getMusic?id=${music.id}`,
+      "GET"
+    ).then((res) => {
+      console.log(res);
+    });
   }, []);
 
   const musicRender = useCallback(

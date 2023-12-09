@@ -11,6 +11,7 @@ import { Music, MusicList } from "../List";
 import { axiosInstance, request } from "../../utils/request";
 import { upload } from "../../utils/uploader";
 import { Controller } from "../Controller";
+import { TestWrap } from "../TestWrap";
 
 export type Action =
   | {
@@ -38,7 +39,7 @@ export enum PLAY_STATE {
 }
 
 export enum PLAY_MODE {
-  LIST = "列表播放",
+  // LIST = "列表播放",
   RANDOM = "随机播放",
   REPEAT = "单曲循环",
   LIST_REPEAT = "列表循环",
@@ -47,6 +48,7 @@ export enum PLAY_MODE {
 export interface State {
   playState: PLAY_STATE;
   currentIndex?: number;
+  currentBlobUrl?: string;
   musicList: Music[];
   playMode: PLAY_MODE;
 }
@@ -54,15 +56,18 @@ export interface State {
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "play":
+      (document.getElementById("audio") as HTMLAudioElement).play();
       return {
         ...state,
         playState: PLAY_STATE.PLAYING,
       };
-    case "stop":
+    case "stop": {
+      (document.getElementById("audio") as HTMLAudioElement).pause();
       return {
         ...state,
         playState: PLAY_STATE.STOPPED,
       };
+    }
     case "playNew": {
       return {
         ...state,
@@ -89,12 +94,23 @@ export const Player = (props) => {
   const [state, dispatch] = useReducer(reducer, {
     playState: PLAY_STATE.STOPPED,
     musicList: [],
-    playMode: PLAY_MODE.REPEAT,
+    playMode: PLAY_MODE.LIST_REPEAT,
+    currentIndex: 0,
   });
 
   const currentMusic = state?.musicList?.[state?.currentIndex || 0];
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  console.log("current play mode = ", state.playMode);
+
+  const replay = useCallback(() => {
+    const audio: HTMLAudioElement = document.getElementById(
+      "audio"
+    ) as HTMLAudioElement;
+    audio.currentTime = 0;
+    audio.load();
+  }, []);
 
   const updateList = useCallback(() => {
     request("query", "POST").then((res) => {
@@ -115,37 +131,59 @@ export const Player = (props) => {
     updateList();
   }, []);
 
-  useEffect(() => {
-    if (audioRef.current) {
-      const listener = () => console.log("load error");
-      audioRef.current.addEventListener("error", listener);
-      return audioRef.current.removeEventListener("error", listener);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (audioRef.current) {
+  //     const listener = () => console.log("load error");
+  //     audioRef.current.addEventListener("error", listener);
+  //     return audioRef.current.removeEventListener("error", listener);
+  //   }
+  // }, []);
 
   const getNextIndex = useCallback(() => {
     switch (state.playMode) {
-      case PLAY_MODE.LIST: {
-        if (state.currentIndex < state.musicList.length - 1)
-          return state.currentIndex + 1;
-        return undefined;
-      }
+      // case PLAY_MODE.LIST: {
+      //   if (state.currentIndex < state.musicList.length - 1)
+      //     return state.currentIndex + 1;
+      //   return undefined;
+      // }
       case PLAY_MODE.RANDOM: {
         return (Math.random() * 999) / (state.musicList.length - 1);
       }
       case PLAY_MODE.REPEAT: {
-        const audio: HTMLAudioElement = document.getElementById(
-          "audio"
-        ) as HTMLAudioElement;
-        audio.currentTime = 0;
-        audio.load();
+        replay();
         return state.currentIndex;
       }
       case PLAY_MODE.LIST_REPEAT: {
         return state.currentIndex + (1 % (state.musicList.length - 1));
       }
     }
-  }, []);
+  }, [state]);
+
+  const player = useMemo(() => {
+    if (!currentMusic?.id) return;
+    return (
+      <audio
+        ref={audioRef}
+        id="audio"
+        autoPlay
+        preload="auto"
+        style={{ position: "absolute", bottom: 100 }}
+        src={`http://localhost:8080/MyMusic/api/getMusic?id=${currentMusic.id}`}
+        onPlay={() => dispatch({ type: "play" })}
+        onEnded={() => {
+          if (state.playMode === PLAY_MODE.REPEAT) {
+            replay();
+          } else {
+            dispatch({ type: "stop" });
+            // 自动连播
+            setTimeout(() =>
+              dispatch({ type: "playNew", data: getNextIndex() })
+            );
+          }
+        }}
+      />
+    );
+  }, [currentMusic, getNextIndex]);
 
   const handleUpload = useCallback(() => {
     upload((e: any) => {
@@ -199,6 +237,7 @@ export const Player = (props) => {
           <div id="cover-ring" />
         </div>
       </div>
+
       <div id="list-wrap">
         <MusicList state={state} dispatch={dispatch} list={state.musicList} />
       </div>
@@ -210,22 +249,9 @@ export const Player = (props) => {
       >
         UPLOAD
       </div>
-      {currentMusic?.id && (
-        <audio
-          ref={audioRef}
-          id="audio"
-          autoPlay
-          preload="auto"
-          style={{ position: "absolute", bottom: 100 }}
-          onSuspend={() => console.log("loading")}
-          src={`http://localhost:8080/MyMusic/api/getMusic?id=${currentMusic.id}`}
-          onEnded={() => {
-            dispatch({ type: "stop" });
-            // 自动连播
-            dispatch({ type: "playNew", data: getNextIndex() });
-          }}
-        ></audio>
-      )}
+
+      {player}
+
       <Controller
         state={state}
         dispatch={dispatch}
