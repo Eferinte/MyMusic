@@ -147,14 +147,14 @@ export const Player = (props) => {
       //   return undefined;
       // }
       case PLAY_MODE.RANDOM: {
-        return (Math.random() * 999) / (state.musicList.length - 1);
+        return Math.floor((Math.random() * 999) % (state.musicList.length - 1));
       }
       case PLAY_MODE.REPEAT: {
         replay();
         return state.currentIndex;
       }
       case PLAY_MODE.LIST_REPEAT: {
-        return state.currentIndex + (1 % (state.musicList.length - 1));
+        return (state.currentIndex + 1) % state.musicList.length;
       }
     }
   }, [state]);

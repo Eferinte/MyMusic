@@ -5,13 +5,15 @@
   transition: 0.25s;
   width: 15vw;
   color: #2d2d2d;
-  animation-name: slideIn;
+  /* animation-name: slideIn; */
   animation-direction: alternate;
   animation-duration: 1s;
   animation-timing-function: ease;
   animation-iteration-count: initial;
   animation-fill-mode: backwards;
   padding: 4px 16px;
+  display: flex;
+  justify-content: space-between;
 }
 .music-row-active {
   background-color: rgba(192, 192, 192, 0.4);
@@ -28,4 +30,20 @@
   to {
     transform: translateX(0%);
   }
+}
+.music-info {
+  flex: auto;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drag-icon {
+  width: 24px;
+  height: 24px;
+  cursor: grab;
+  flex-shrink: 0;
+}
+.music-info,
+.drag-icon {
+  margin: auto 4px;
 }

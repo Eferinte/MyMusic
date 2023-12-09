@@ -1,0 +1,21 @@
+.drag-sort-item,
+.drag-sort-item-top,
+.drag-sort-item-bottom {
+  position: relative;
+}
+.drag-sort-item-top::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 2px;
+  width: 100%;
+  background-color: green;
+}
+.drag-sort-item-bottom::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: green;
+}

@@ -1,8 +1,12 @@
-import { Dispatch, useCallback, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import "./index.css";
 import { Action, State } from "../Player";
 import { request } from "../../utils/request";
 import { Hinter } from "../Hinter/indext";
+// @ts-ignore
+import DragIcon from "./assets/drag.svg";
+import { ReactSortable } from "react-sortablejs";
+import DragSorter from "../DragSorter";
 
 export interface Music {
   name: string;
@@ -20,6 +24,11 @@ interface Props {
 
 export const MusicList = (props: Props) => {
   const { list, dispatch, state } = props;
+  const [sortList, setSortList] = useState<Music[]>(list);
+
+  useEffect(() => {
+    setSortList(list);
+  }, [list]);
 
   const tryPlay = useCallback((music: Music, index: number) => {
     request(`checkSrc?id=${music.id}`, "GET").then((res) => {
@@ -43,10 +52,11 @@ export const MusicList = (props: Props) => {
           className={
             state.currentIndex === key ? "music-row-active" : "music-row"
           }
-          key={key}
+          key={music.id}
           onClick={() => tryPlay(music, key)}
         >
-          {music.name}
+          <div className="music-info">{music.name}</div>
+          <img className="drag-icon" src={DragIcon} />
         </div>
       );
     },
@@ -55,7 +65,9 @@ export const MusicList = (props: Props) => {
 
   return (
     <div className="list-wrap">
-      {list.map((music, index) => musicRender(music, index))}
+      <DragSorter rowHeight={32} list={sortList} setList={setSortList}>
+        {list.map((music, index) => musicRender(music, index))}
+      </DragSorter>
     </div>
   );
 };
