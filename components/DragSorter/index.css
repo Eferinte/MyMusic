@@ -8,7 +8,7 @@
   position: absolute;
   top: 0;
   height: 2px;
-  width: 100%;
+  width: calc(100% - 32px);
   background-color: green;
 }
 .drag-sort-item-bottom::after {
@@ -16,6 +16,6 @@
   position: absolute;
   bottom: 0;
   height: 2px;
-  width: 100%;
+  width: calc(100% - 32px);
   background-color: green;
 }

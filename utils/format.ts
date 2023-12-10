@@ -20,16 +20,22 @@ export const sortChange = <T>(
   originIndex: number,
   targetIndex: number
 ): T[] => {
+  console.log("before sort", list);
+  console.log("from ", originIndex, " to ", targetIndex);
   if (originIndex === targetIndex) return list;
   if (originIndex < targetIndex) {
     const head = list.slice(0, originIndex);
     const moveSubList = list.slice(originIndex + 1, targetIndex + 1);
     const tail = list.slice(targetIndex + 1);
-    return [...head, ...moveSubList, list[originIndex], ...tail];
+    const sorted = [...head, ...moveSubList, list[originIndex], ...tail];
+    console.log("after sort", sorted);
+    return sorted;
   } else {
     const head = list.slice(0, targetIndex);
     const moveSubList = list.slice(targetIndex, originIndex);
     const tail = list.slice(originIndex + 1);
-    return [...head, list[originIndex], ...moveSubList, ...tail];
+    const sorted = [...head, list[originIndex], ...moveSubList, ...tail];
+    console.log("after sort", sorted);
+    return sorted;
   }
 };

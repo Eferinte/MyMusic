@@ -1,6 +1,5 @@
 .music-row,
 .music-row-active {
-  margin: 8px;
   background-color: white;
   transition: 0.25s;
   width: 15vw;

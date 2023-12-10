@@ -12,6 +12,7 @@ import { axiosInstance, request } from "../../utils/request";
 import { upload } from "../../utils/uploader";
 import { Controller } from "../Controller";
 import { TestWrap } from "../TestWrap";
+import { VoiceVison } from "../VoiceVison";
 
 export type Action =
   | {
@@ -26,11 +27,15 @@ export type Action =
     }
   | {
       type: "playNew";
-      data: number;
+      data: Music;
     }
   | {
       type: "updatePlayMode";
       data: PLAY_MODE;
+    }
+  | {
+      type: "updateNeedSynchrone";
+      data: boolean;
     };
 
 export enum PLAY_STATE {
@@ -47,10 +52,10 @@ export enum PLAY_MODE {
 
 export interface State {
   playState: PLAY_STATE;
-  currentIndex?: number;
-  currentBlobUrl?: string;
+  currentMusic?: Music;
   musicList: Music[];
   playMode: PLAY_MODE;
+  needSynchrone: boolean;
 }
 
 const reducer = (state: State, action: Action): State => {
@@ -72,7 +77,7 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         playState: PLAY_STATE.PLAYING,
-        currentIndex: action.data,
+        currentMusic: action.data,
       };
     }
     case "updateList": {
@@ -87,6 +92,12 @@ const reducer = (state: State, action: Action): State => {
         playMode: action.data,
       };
     }
+    case "updateNeedSynchrone": {
+      return {
+        ...state,
+        needSynchrone: action.data,
+      };
+    }
   }
 };
 
@@ -95,14 +106,12 @@ export const Player = (props) => {
     playState: PLAY_STATE.STOPPED,
     musicList: [],
     playMode: PLAY_MODE.LIST_REPEAT,
-    currentIndex: 0,
+    needSynchrone: false,
   });
 
-  const currentMusic = state?.musicList?.[state?.currentIndex || 0];
+  const currentindex = state?.musicList?.indexOf(state.currentMusic);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  console.log("current play mode = ", state.playMode);
 
   const replay = useCallback(() => {
     const audio: HTMLAudioElement = document.getElementById(
@@ -131,14 +140,6 @@ export const Player = (props) => {
     updateList();
   }, []);
 
-  // useEffect(() => {
-  //   if (audioRef.current) {
-  //     const listener = () => console.log("load error");
-  //     audioRef.current.addEventListener("error", listener);
-  //     return audioRef.current.removeEventListener("error", listener);
-  //   }
-  // }, []);
-
   const getNextIndex = useCallback(() => {
     switch (state.playMode) {
       // case PLAY_MODE.LIST: {
@@ -147,28 +148,31 @@ export const Player = (props) => {
       //   return undefined;
       // }
       case PLAY_MODE.RANDOM: {
-        return Math.floor((Math.random() * 999) % (state.musicList.length - 1));
+        return state.musicList[
+          Math.floor((Math.random() * 999) % (state.musicList.length - 1))
+        ];
       }
       case PLAY_MODE.REPEAT: {
         replay();
-        return state.currentIndex;
+        return state.currentMusic;
       }
       case PLAY_MODE.LIST_REPEAT: {
-        return (state.currentIndex + 1) % state.musicList.length;
+        return state.musicList[(currentindex + 1) % state.musicList.length];
       }
     }
-  }, [state]);
+  }, [state, currentindex]);
 
   const player = useMemo(() => {
-    if (!currentMusic?.id) return;
+    if (!state.currentMusic) return;
     return (
       <audio
+        crossOrigin="anonymous"
         ref={audioRef}
         id="audio"
         autoPlay
         preload="auto"
         style={{ position: "absolute", bottom: 100 }}
-        src={`http://localhost:8080/MyMusic/api/getMusic?id=${currentMusic.id}`}
+        src={`http://localhost:8080/MyMusic/api/getMusic?id=${state.currentMusic.id}`}
         onPlay={() => dispatch({ type: "play" })}
         onEnded={() => {
           if (state.playMode === PLAY_MODE.REPEAT) {
@@ -183,7 +187,7 @@ export const Player = (props) => {
         }}
       />
     );
-  }, [currentMusic, getNextIndex]);
+  }, [state.currentMusic, state.playMode, getNextIndex]);
 
   const handleUpload = useCallback(() => {
     upload((e: any) => {
@@ -220,6 +224,9 @@ export const Player = (props) => {
 
   return (
     <div id="main-wrap">
+      <div id="vison-wrap">
+        <VoiceVison audio={audioRef.current} />
+      </div>
       <div className="player-wrap">
         <div
           id={

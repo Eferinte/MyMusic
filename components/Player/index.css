@@ -2,7 +2,7 @@
   width: 206px;
   height: 205px;
   position: absolute;
-  left: 50%;
+  left: calc(50% - 7.5vw);
   top: 50%;
   transform: translate(-50%, -50%) scale(2);
   color: silver;
@@ -85,4 +85,12 @@
 #uploader:active {
   box-shadow: 2px 2px 10px -4px silver;
   color: silver;
+}
+#vison-wrap {
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 7.5vw);
+  transform: translate(-50%, -50%);
 }

@@ -80,7 +80,7 @@ export const Controller = (props: Props) => {
   useEffect(() => {
     const upCb = () => {
       const audio = document.getElementById("audio") as HTMLAudioElement;
-      if (!audio.duration) return;
+      if (!audio?.duration) return;
       if (getDragging()) audio.currentTime = getTargetTime();
       setTimeout(() => setDragging(false));
     };

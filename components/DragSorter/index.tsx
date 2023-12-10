@@ -11,7 +11,7 @@ import {
 } from "react";
 import "./index.css";
 import useGetState from "../../hooks/useGetState";
-import { sortChange } from "../../utils/format";
+import { clamp, sortChange } from "../../utils/format";
 
 interface Props<T> {
   children: ReactElement[];
@@ -49,24 +49,19 @@ export default function DragSorter<T>(porps: Props<T>) {
     (ev: MouseEvent, index: number) => {
       const mouseY = ev.clientY;
       const offset = ((mouseY - getStartCenterY()) / rowHeight) | 0;
+      console.log("offset=", offset);
       const targetIndex = dragIndex + offset;
-      console.log(
-        "from",
-        dragIndex,
-        "to",
-        targetIndex,
-        mouseY,
-        getStartCenterY(),
-        rowHeight
-      );
-      setTargetIndex(targetIndex);
+      setTargetIndex(clamp(targetIndex, 0, list.length - 1));
     },
-    [getDragIndex, dragIndex, getStartCenterY, rowHeight]
+    [getDragIndex, dragIndex, getStartCenterY, rowHeight, list]
   );
 
   const handleApplyTarget = useCallback(() => {
-    setList(sortChange(list, getDragIndex(), getTargetIndex()));
-  }, [setList]);
+    const targetList = sortChange(list, getDragIndex(), getTargetIndex());
+    console.log("target=", targetList);
+    setList(targetList);
+    setTargetIndex(undefined);
+  }, [setList, list]);
 
   const getPreviewClassName = useCallback(
     (index: number) => {
@@ -77,8 +72,6 @@ export default function DragSorter<T>(porps: Props<T>) {
     },
     [dragIndex, targetIndex]
   );
-
-  console.log(targetIndex);
 
   const newList = children.map((origin, index) =>
     cloneElement(origin, {
@@ -95,7 +88,7 @@ export default function DragSorter<T>(porps: Props<T>) {
         origin.props.onDrag?.(ev);
       },
       onDragEnd: (ev) => {
-        handleApplyTarget;
+        handleApplyTarget();
         origin.props.onDragEnd?.(ev);
       },
     })
