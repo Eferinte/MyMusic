@@ -13,6 +13,9 @@ import { upload } from "../../utils/uploader";
 import { Controller } from "../Controller";
 import { TestWrap } from "../TestWrap";
 import { VoiceVison } from "../VoiceVison";
+import { useSSE } from "../../hooks/useSSE";
+import { API_URL } from "../../constant";
+import { Spine } from "../Spine";
 
 export type Action =
   | {
@@ -108,6 +111,10 @@ export const Player = (props) => {
     playMode: PLAY_MODE.LIST_REPEAT,
     needSynchrone: false,
   });
+
+  // const {} = useSSE(API_URL + "sse/time", (ev) => {
+  //   console.log(ev);
+  // });
 
   const currentindex = state?.musicList?.indexOf(state.currentMusic);
 
@@ -258,6 +265,10 @@ export const Player = (props) => {
       </div>
 
       {player}
+
+      <TestWrap>
+        <Spine />
+      </TestWrap>
 
       <Controller
         state={state}

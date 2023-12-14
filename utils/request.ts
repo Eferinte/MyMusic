@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { API_URL } from "../constant";
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/MyMusic/api/",
+  baseURL: API_URL + "api/",
   timeout: 1000,
 });
 export const request = (

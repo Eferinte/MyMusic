@@ -9,11 +9,14 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@esotericsoftware/spine-player": "^4.2.33",
     "@expo/webpack-config": "^19.0.0",
+    "@types/event-source-polyfill": "^1.0.5",
     "@types/jsmediatags": "^3.9.6",
     "@types/react": "~18.2.14",
     "axios": "^1.6.2",
     "css-loader": "^6.8.1",
+    "event-source-polyfill": "^1.0.31",
     "expo": "~49.0.15",
     "expo-status-bar": "~1.6.0",
     "jsmediatags": "^3.9.7",
