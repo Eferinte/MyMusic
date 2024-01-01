@@ -16,6 +16,8 @@ import { VoiceVison } from "../VoiceVison";
 import { useSSE } from "../../hooks/useSSE";
 import { API_URL } from "../../constant";
 import { Spine } from "../Spine";
+import Uploader from "../Uploader";
+import Lyricor from "../Lyricor";
 
 export type Action =
   | {
@@ -147,6 +149,13 @@ export const Player = (props) => {
     updateList();
   }, []);
 
+  document.onkeyup = (ev) => {
+    if (ev.key === " " && state.currentMusic) {
+      if (state.playState === PLAY_STATE.PLAYING) dispatch({ type: "stop" });
+      else dispatch({ type: "play" });
+    }
+  };
+
   const getNextIndex = useCallback(() => {
     switch (state.playMode) {
       // case PLAY_MODE.LIST: {
@@ -196,42 +205,9 @@ export const Player = (props) => {
     );
   }, [state.currentMusic, state.playMode, getNextIndex]);
 
-  const handleUpload = useCallback(() => {
-    upload((e: any) => {
-      if (e.target.files[0]) {
-        // 考虑获取音频信息  https://github.com/aadsm/jsmediatags
-        const fullName: string = e.target.files[0].name;
-        const dotIndex: number = fullName.lastIndexOf(".");
-        if (dotIndex !== -1) {
-          axiosInstance
-            .post(
-              "upload",
-              {
-                name: fullName.slice(0, dotIndex),
-                suffix: fullName.slice(dotIndex + 1),
-                data: e.target.files[0],
-              },
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            )
-            .then((res) => {
-              if (res.data.data) {
-                updateList();
-              }
-            });
-        } else {
-          throw Error("illegal file name");
-        }
-      }
-    });
-  }, []);
-
   return (
     <div id="main-wrap">
-      <div id="vison-wrap">
+      {/* <div id="vison-wrap">
         <VoiceVison audio={audioRef.current} />
       </div>
       <div className="player-wrap">
@@ -250,25 +226,20 @@ export const Player = (props) => {
           <div id="cover-center" />
           <div id="cover-ring" />
         </div>
-      </div>
+      </div> */}
 
       <div id="list-wrap">
         <MusicList state={state} dispatch={dispatch} list={state.musicList} />
       </div>
 
-      <div
-        id="uploader"
-        style={{ position: "absolute", bottom: 20 }}
-        onClick={handleUpload}
-      >
-        UPLOAD
-      </div>
-
+      <Uploader updateList={updateList} />
+      {state?.currentMusic?.id && (
+        <div id="lyric-container">
+          <Lyricor musicId={state.currentMusic.id} updateList={updateList} />
+        </div>
+      )}
       {player}
-
-      <TestWrap>
-        <Spine />
-      </TestWrap>
+      {/* <Spine style={{ position: "fixed", left: 200, top: 200 }} /> */}
 
       <Controller
         state={state}

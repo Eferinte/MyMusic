@@ -2,7 +2,7 @@
 .music-row-active {
   background-color: white;
   transition: 0.25s;
-  width: 15vw;
+  width: 100%;
   color: #2d2d2d;
   /* animation-name: slideIn; */
   animation-direction: alternate;
