@@ -3,6 +3,7 @@
   background-color: white;
   transition: 0.25s;
   width: 100%;
+  box-sizing: border-box;
   color: #2d2d2d;
   /* animation-name: slideIn; */
   animation-direction: alternate;
@@ -16,6 +17,9 @@
 }
 .music-row-active {
   background-color: rgba(192, 192, 192, 0.4);
+}
+.music-row:active {
+  opacity: 0.45;
 }
 .music-row:hover {
   background-color: silver;

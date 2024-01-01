@@ -1,0 +1,10 @@
+#accessor {
+  position: fixed;
+  left: 10vw;
+  top: 50vh;
+  transform: translateY(-50%);
+  box-shadow: 0 0 10px 2px silver;
+}
+#accessor:hover {
+  cursor: pointer;
+}

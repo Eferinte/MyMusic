@@ -4,6 +4,7 @@ import { upload } from "../../utils/uploader";
 import "./index.css";
 import { useLyric } from "./useLyric";
 import { useCurrTime } from "../../hooks/useCurrTime";
+import { getCookies } from "../../utils/cookies";
 
 interface Props {
   updateList: () => void;
@@ -46,6 +47,7 @@ const Lyricor = (props: Props) => {
                 {
                   headers: {
                     "Content-Type": "multipart/form-data",
+                    Authorization: getCookies("token"),
                   },
                 }
               )

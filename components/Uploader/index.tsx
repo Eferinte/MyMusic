@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { axiosInstance } from "../../utils/request";
 import { upload } from "../../utils/uploader";
 import "./index.css";
+import { getCookies } from "../../utils/cookies";
 
 interface Props {
   updateList: () => void;
@@ -28,6 +29,7 @@ const Uploader = (props: Props) => {
               {
                 headers: {
                   "Content-Type": "multipart/form-data",
+                  Authorization: getCookies("token"),
                 },
               }
             )

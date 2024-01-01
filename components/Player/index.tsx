@@ -18,6 +18,7 @@ import { API_URL } from "../../constant";
 import { Spine } from "../Spine";
 import Uploader from "../Uploader";
 import Lyricor from "../Lyricor";
+import Accessor from "../Accessor";
 
 export type Action =
   | {
@@ -232,12 +233,14 @@ export const Player = (props) => {
         <MusicList state={state} dispatch={dispatch} list={state.musicList} />
       </div>
 
-      <Uploader updateList={updateList} />
       {state?.currentMusic?.id && (
         <div id="lyric-container">
           <Lyricor musicId={state.currentMusic.id} updateList={updateList} />
         </div>
       )}
+      <Accessor>
+        <Uploader updateList={updateList} />
+      </Accessor>
       {player}
       {/* <Spine style={{ position: "fixed", left: 200, top: 200 }} /> */}
 
