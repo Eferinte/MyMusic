@@ -39,3 +39,8 @@ export const sortChange = <T>(
     return sorted;
   }
 };
+
+export const getClassName = (identify: string, isActive: boolean) => {
+  if (isActive) return identify + "-active";
+  return identify;
+};

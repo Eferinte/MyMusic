@@ -1,10 +1,242 @@
 #accessor {
   position: fixed;
-  left: 10vw;
-  top: 50vh;
-  transform: translateY(-50%);
-  box-shadow: 0 0 10px 2px silver;
+  left: 36px;
+  top: 36px;
+  transform: rotate(0);
+  transition: 0.25s;
+  /* box-shadow: 0 0 10px 2px silver; */
+  background-image: url(./assets/tlt_RitualCircle01.png);
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+  mix-blend-mode: multiply;
+  filter: invert(100%);
+  border-radius: 50%;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: center;
 }
 #accessor:hover {
   cursor: pointer;
+  transition: 0.25s;
+  transform: rotate(-90deg);
+}
+
+#inner-accessor {
+  background-image: url(./assets/tlt_RitualCircle02.png);
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+  transform: translate(-50%, -50%) rotate(0deg) scale(0.2);
+  opacity: 0;
+  transition: 0.25s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#accessor:hover #inner-accessor {
+  background-image: url(./assets/tlt_RitualCircle02.png);
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+  transform: translate(-50%, -50%) rotate(360deg) scale(1.5);
+  opacity: 1;
+}
+
+#inner-accessor-2 {
+  background-image: url(./assets/tlt_RitualCircle05.png);
+  background-size: cover;
+  background-position: center;
+  transform-origin: center;
+  height: 120px;
+  width: 120px;
+  transform: translate(-50%, -50%) rotate(0deg) scale(0.2);
+  opacity: 0;
+  transition: 0.25s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+#accessor:hover #inner-accessor-2 {
+  background-image: url(./assets/tlt_RitualCircle05.png);
+  background-size: cover;
+  background-position: center;
+  transform-origin: center;
+  height: 120px;
+  width: 120px;
+  transform: translate(-50%, -50%) rotate(-360deg) scale(1.5);
+  opacity: 0.6;
+}
+#accessor::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background-color: #a8c7fa;
+  filter: invert(100%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: 0.25s;
+}
+#accessor:hover::after {
+  opacity: 0.7;
+}
+#accessor:active {
+  cursor: pointer;
+  animation-name: none;
+  transition: 0.25s;
+  transform: rotate(90deg);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.mask {
+  pointer-events: none;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0);
+  transition: 0.25s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+.mask-active {
+  transition: 0.25s;
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+@keyframes circleSpin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200vw;
+  height: 200vw;
+  background-image: url(./assets/tlt_RitualCircle03.png);
+  background-size: cover;
+  filter: invert(100%);
+  mix-blend-mode: multiply;
+  animation-name: circleSpin;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+  opacity: 0;
+  transition: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+.circle-active {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120vh;
+  height: 120vh;
+  background-image: url(./assets/tlt_RitualCircle03.png);
+  background-size: cover;
+  filter: invert(100%) hue-rotate(60deg) drop-shadow(0 0 24px black);
+  mix-blend-mode: multiply;
+  animation-name: circleSpin;
+  animation-duration: 60s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+  opacity: 0.7;
+  /* border-radius: 50%; */
+  transition: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+.circle-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 124vh;
+  height: 124vh;
+  background-image: url(./assets/tlt_RitualCircle03.png);
+  background-size: cover;
+  filter: invert(0%) hue-rotate(60deg) drop-shadow(0 0 24px black);
+  mix-blend-mode: multiply;
+  animation-name: circleSpin;
+  animation-duration: 60s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+  opacity: 0.7;
+  /* border-radius: 50%; */
+  transition: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+.input-container::before {
+  content: "ACCESS CODE";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  width: fit-content;
+  height: fit-content;
+  font-size: 96px;
+  font-weight: 900;
+  color: silver;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+.input-container-error::before {
+  content: "ACCESS CODE";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  width: fit-content;
+  height: fit-content;
+  font-size: 96px;
+  font-weight: 900;
+  color: rgb(170, 71, 71);
+  opacity: 1;
+  transition: 0.3s;
+}
+#access-input {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+
+  outline: none;
+  border: none;
+  height: 44px;
+  width: 360px;
+  font-size: 36px;
+  padding: 4px 24px;
+  border-bottom: solid 2px silver;
+  background: rgba(255, 255, 255, 0);
+  color: white;
+}
+#access-input::placeholder {
+  color: rgb(214, 214, 214);
+  text-align: center;
 }
