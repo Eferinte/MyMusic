@@ -9,10 +9,11 @@ import { getCookies } from "../../utils/cookies";
 interface Props {
   updateList: () => void;
   musicId: number;
+  accessed?: boolean;
 }
 
 const Lyricor = (props: Props) => {
-  const { updateList, musicId } = props;
+  const { updateList, musicId, accessed } = props;
   const [rawLyric, setRawLyric] = useState<string>();
   const { currentTime } = useCurrTime();
 
@@ -74,18 +75,38 @@ const Lyricor = (props: Props) => {
               key={lineIndex + "_" + trackIndex}
               className={line.active ? "line-active" : "line"}
             >
-              {track}
+              {track.map((un) => (
+                <div className="enhanced-unit">
+                  <div className="phonetic">{un.phonetic}</div>
+                  <div
+                    style={
+                      un.phonetic.length
+                        ? {
+                            width: `${Math.max(
+                              un.phonetic.length * 0.8,
+                              un.plainText.length
+                            )}em`,
+                          }
+                        : {}
+                    }
+                  >
+                    {un.plainText}
+                  </div>
+                </div>
+              ))}
             </div>
           ))
         )}
       </div>
-      <div
-        id="lyricUploader"
-        //   style={{ position: "absolute", bottom: 20 }}
-        onClick={handleUpload}
-      >
-        UPLOAD LYRIC
-      </div>
+      {accessed && (
+        <div
+          id="lyricUploader"
+          //   style={{ position: "absolute", bottom: 20 }}
+          onClick={handleUpload}
+        >
+          UPLOAD LYRIC
+        </div>
+      )}
     </div>
   );
 };

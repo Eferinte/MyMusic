@@ -14,6 +14,7 @@ import DragIcon from "./assets/drag.svg";
 import { ReactSortable } from "react-sortablejs";
 import DragSorter from "../DragSorter";
 import useGetState from "../../hooks/useGetState";
+import { arrayEqual } from "../../utils/format";
 
 export interface Music {
   name: string;
@@ -27,10 +28,11 @@ interface Props {
   list: Music[];
   dispatch: Dispatch<Action>;
   state: State;
+  updateList: () => void;
 }
 
 export const MusicList = (props: Props) => {
-  const { list, dispatch, state } = props;
+  const { list, dispatch, state, updateList } = props;
   const [sortList, setSortList, getSortList] = useGetState<Music[]>(list);
 
   useEffect(() => {
@@ -38,14 +40,18 @@ export const MusicList = (props: Props) => {
   }, [list]);
 
   useEffect(() => {
-    if (state.needSynchrone) {
+    if (
+      !arrayEqual<Music>(state.musicList, sortList, (a, b) => a.id === b.id)
+    ) {
       console.log("synchrone", getSortList());
-      const sort = getSortList().map((_) => _.id);
+      const sort = sortList.map((_) => _.id);
       // 有重复id
       if (new Set(sort).size !== sort.length) return;
-      request("resort", "POST", sort);
+      request("resort", "POST", sort).then((res) => {
+        res.data.date && updateList();
+      });
     }
-  }, [state.needSynchrone]);
+  }, [state.musicList, sortList]);
 
   useEffect(() => {
     if (

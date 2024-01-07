@@ -44,3 +44,17 @@ export const getClassName = (identify: string, isActive: boolean) => {
   if (isActive) return identify + "-active";
   return identify;
 };
+
+export const arrayEqual = <T>(
+  arr1: T[],
+  arr2: T[],
+  compareFn: (e1: T, e2: T) => boolean
+): boolean => {
+  return (
+    arr1.length === arr2.length &&
+    arr1.reduce(
+      (total, curr, index) => total && compareFn(curr, arr2?.[index]),
+      true
+    )
+  );
+};

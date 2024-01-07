@@ -7,3 +7,7 @@ export const getCookies = (name: string) => {
   );
   return document.cookie.replace(regexPattern, "$1");
 };
+
+export const removeCookie = (name: string) => {
+  document.cookie = `${name}=";max-age=${1}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+};

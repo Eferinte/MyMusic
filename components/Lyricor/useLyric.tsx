@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { timeAnalyzer } from "./helper";
+import { EnhancedText, textEnhanced, timeAnalyzer } from "./helper";
 
 export interface Line {
-  text: string[];
+  text: EnhancedText[][];
   start: number;
   end?: number;
   active: boolean;
@@ -22,7 +22,11 @@ export const analyzeRawLyricToLine = (raw: string): Line[] => {
         li.slice(timeStampStartIndex + 1, timeStampEndIndex)
       );
       const lyricText = li.slice(timeStampEndIndex + 1).trim();
-      return { text: [lyricText], start: timeStamp, active: false };
+      return {
+        text: [textEnhanced(lyricText)],
+        start: timeStamp,
+        active: false,
+      };
     });
 
   for (const li of lines) {
@@ -38,6 +42,7 @@ export const analyzeRawLyricToLine = (raw: string): Line[] => {
       mergedLines.push(li);
     }
   }
+  console.log("merge = ", mergedLines);
   return mergedLines;
 };
 

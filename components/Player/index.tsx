@@ -115,6 +115,8 @@ export const Player = (props) => {
     needSynchrone: false,
   });
 
+  const [ifAccessed, setIfAccessed] = useState<boolean>(false);
+
   // const {} = useSSE(API_URL + "sse/time", (ev) => {
   //   console.log(ev);
   // });
@@ -230,15 +232,24 @@ export const Player = (props) => {
       </div> */}
 
       <div id="list-wrap">
-        <MusicList state={state} dispatch={dispatch} list={state.musicList} />
+        <MusicList
+          updateList={updateList}
+          state={state}
+          dispatch={dispatch}
+          list={state.musicList}
+        />
       </div>
 
       {state?.currentMusic?.id && (
         <div id="lyric-container">
-          <Lyricor musicId={state.currentMusic.id} updateList={updateList} />
+          <Lyricor
+            accessed={ifAccessed}
+            musicId={state.currentMusic.id}
+            updateList={updateList}
+          />
         </div>
       )}
-      <Accessor>
+      <Accessor setIfAccessed={setIfAccessed}>
         <Uploader updateList={updateList} />
       </Accessor>
       {player}

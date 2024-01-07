@@ -1,15 +1,32 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import "./index.css";
 import { axiosInstance, request } from "../../utils/request";
-import { getCookies, setCookies } from "../../utils/cookies";
+import { getCookies, removeCookie, setCookies } from "../../utils/cookies";
 import { getClassName } from "../../utils/format";
 
 interface Props {
   children: ReactNode;
+  setIfAccessed?: Dispatch<SetStateAction<boolean>>;
 }
 
+const checkAuth = async (token: string) => {
+  const res = await axiosInstance.post(
+    "authorizationCheck",
+    { access_code: token },
+    { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+  );
+  if (res.data.data === false) removeCookie(token);
+};
+
 const Accessor = (props: Props) => {
-  const { children } = props;
+  const { children, setIfAccessed } = props;
   const [accessed, setAccessed] = useState<boolean>();
   const [inAccessing, setInAccessing] = useState<boolean>(false);
   const [accessCode, setAccessCode] = useState<string>();
@@ -18,12 +35,13 @@ const Accessor = (props: Props) => {
   useEffect(() => {
     const token = getCookies("token");
     setAccessed(!!token);
+    setIfAccessed?.(!!token);
+    if (token) checkAuth(token);
   }, []);
 
   // TODO 登录成功动画
   const welcome = useCallback(() => {}, []);
 
-  // TODO 添加输入框
   const tryAccess = useCallback(
     async (accessCode: string) => {
       try {
@@ -35,6 +53,7 @@ const Accessor = (props: Props) => {
         if (res.data.data && res.data.code === 2000) {
           setCookies("token", res.data.data);
           setAccessed(true);
+          setIfAccessed?.(true);
         } else {
           setAccessCode("");
           setError(true);
@@ -45,6 +64,7 @@ const Accessor = (props: Props) => {
       } catch (error) {
         console.log("error", error);
         setAccessed(false);
+        setIfAccessed?.(false);
         welcome();
       }
     },
