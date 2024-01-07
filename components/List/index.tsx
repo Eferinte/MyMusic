@@ -15,6 +15,7 @@ import { ReactSortable } from "react-sortablejs";
 import DragSorter from "../DragSorter";
 import useGetState from "../../hooks/useGetState";
 import { arrayEqual } from "../../utils/format";
+import { getCookies } from "../../utils/cookies";
 
 export interface Music {
   name: string;
@@ -47,7 +48,9 @@ export const MusicList = (props: Props) => {
       const sort = sortList.map((_) => _.id);
       // 有重复id
       if (new Set(sort).size !== sort.length) return;
-      request("resort", "POST", sort).then((res) => {
+      request("resort", "POST", sort, {
+        headers: { Authorization: getCookies("token") },
+      }).then((res) => {
         res.data.date && updateList();
       });
     }

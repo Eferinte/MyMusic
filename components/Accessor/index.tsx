@@ -19,10 +19,16 @@ interface Props {
 const checkAuth = async (token: string) => {
   const res = await axiosInstance.post(
     "authorizationCheck",
-    { access_code: token },
-    { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    {},
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: token,
+      },
+    }
   );
   if (res.data.data === false) removeCookie(token);
+  return res.data.data;
 };
 
 const Accessor = (props: Props) => {
@@ -34,9 +40,12 @@ const Accessor = (props: Props) => {
 
   useEffect(() => {
     const token = getCookies("token");
-    setAccessed(!!token);
-    setIfAccessed?.(!!token);
-    if (token) checkAuth(token);
+    if (token) {
+      checkAuth(token).then((accessed) => {
+        setAccessed(accessed);
+        setIfAccessed?.(accessed);
+      });
+    }
   }, []);
 
   // TODO 登录成功动画
