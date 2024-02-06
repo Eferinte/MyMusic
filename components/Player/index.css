@@ -54,6 +54,12 @@
     transform: rotate(360deg);
   }
 }
+@media (max-width: 600px) {
+  #list-wrap {
+    display: none;
+  }
+}
+
 #list-wrap {
   position: absolute;
   top: 0;

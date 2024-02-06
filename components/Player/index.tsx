@@ -19,6 +19,7 @@ import { Spine } from "../Spine";
 import Uploader from "../Uploader";
 import Lyricor from "../Lyricor";
 import Accessor from "../Accessor";
+import { useDevice } from "../../hooks/useDevice";
 
 export type Action =
   | {
@@ -108,6 +109,8 @@ const reducer = (state: State, action: Action): State => {
 };
 
 export const Player = (props) => {
+  const { platform } = useDevice();
+
   const [state, dispatch] = useReducer(reducer, {
     playState: PLAY_STATE.STOPPED,
     musicList: [],
@@ -156,6 +159,8 @@ export const Player = (props) => {
     if (ev.key === " " && state.currentMusic) {
       if (state.playState === PLAY_STATE.PLAYING) dispatch({ type: "stop" });
       else dispatch({ type: "play" });
+      ev.preventDefault();
+      ev.stopPropagation();
     }
   };
 
@@ -168,7 +173,7 @@ export const Player = (props) => {
       // }
       case PLAY_MODE.RANDOM: {
         return state.musicList[
-          Math.floor((Math.random() * 999) % (state.musicList.length - 1))
+          Math.floor(Math.random() * 1000) % state.musicList.length
         ];
       }
       case PLAY_MODE.REPEAT: {
@@ -191,7 +196,7 @@ export const Player = (props) => {
         autoPlay
         preload="auto"
         style={{ position: "absolute", bottom: 100 }}
-        src={`http://localhost:8080/MyMusic/api/getMusic?id=${state.currentMusic.id}`}
+        src={`${API_URL}api/getMusic?id=${state.currentMusic.id}`}
         onPlay={() => dispatch({ type: "play" })}
         onEnded={() => {
           if (state.playMode === PLAY_MODE.REPEAT) {
@@ -249,11 +254,36 @@ export const Player = (props) => {
           />
         </div>
       )}
-      <Accessor setIfAccessed={setIfAccessed}>
-        <Uploader updateList={updateList} />
-      </Accessor>
+      {platform?.includes("Windows") && (
+        <Accessor setIfAccessed={setIfAccessed}>
+          <Uploader updateList={updateList} />
+        </Accessor>
+      )}
       {player}
       {/* <Spine style={{ position: "fixed", left: 200, top: 200 }} /> */}
+
+      {/* <TestWrap>
+        <div
+          style={{
+            mixBlendMode: "lighten",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: "100px",
+              backgroundColor: "rgba(0,255,0,1)",
+            }}
+          ></div>
+          <div
+            style={{
+              position: "absolute",
+              inset: "100px",
+              backgroundColor: "rgba(255,0,0,1)",
+            }}
+          ></div>
+        </div>
+      </TestWrap> */}
 
       <Controller
         state={state}

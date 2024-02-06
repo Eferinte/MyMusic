@@ -4,6 +4,7 @@
   left: 0;
   width: 100vw;
   height: 5vh;
+  min-height: 50px;
   display: flex;
   box-shadow: 2px 2px 10px -5px;
   background-color: white;
@@ -62,12 +63,38 @@
 #mode-controller:hover {
   background-color: rgba(192, 192, 192, 0.2);
 }
-#play-mode-icon,
+.play-mode-icon,
 #play-mode-text {
   margin: auto 4px;
 }
-#play-mode-icon {
+.play-mode-icon {
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+.list-btn {
+  display: none;
+}
+@media (max-width: 600px) {
+  .list-btn {
+    display: block;
+  }
+  #track {
+    flex-shrink: 0;
+    margin: 10px 0 0;
+    height: 4px;
+    width: 90%;
+  }
+  #timer {
+    margin-left: -6px;
+  }
+  #mode-controller {
+    padding: 8px 0;
+    margin-right: 10%;
+  }
+  .controller-wrap {
+    flex-wrap: wrap;
+    height: fit-content;
+    padding: 0 5%;
+  }
 }

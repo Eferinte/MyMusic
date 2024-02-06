@@ -9,6 +9,8 @@ import PlayModeListIcon from "./assets/play_mode_list.svg";
 import PlayModeRepeatIcon from "./assets/play_mode_repeat.svg";
 //@ts-ignore
 import PlayModeRandomIcon from "./assets/play_mode_random.svg";
+//@ts-ignore
+import ListIcon from "./assets/list.svg";
 
 interface Props {
   audioRef: HTMLAudioElement;
@@ -137,8 +139,9 @@ export const Controller = (props: Props) => {
           });
         }}
       >
-        <img id="play-mode-icon" src={modeIcon} />
+        <img className="play-mode-icon" src={modeIcon} />
         <div id="play-mode-text">{state.playMode}</div>
+        <img className="play-mode-icon list-btn" src={ListIcon} />
       </div>
     </div>
   );

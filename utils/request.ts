@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { API_URL } from "../constant";
 export const axiosInstance = axios.create({
   baseURL: API_URL + "api/",
-  timeout: 1000,
+  timeout: 30 * 1000,
 });
 export const request = (
   path: string,

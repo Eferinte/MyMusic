@@ -17,6 +17,7 @@
   animation-iteration-count: infinite;
   transform-origin: center;
 }
+
 #accessor:hover {
   cursor: pointer;
   transition: 0.25s;
